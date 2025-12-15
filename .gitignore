@@ -1,1 +1,19 @@
-_doc/
+# Data
+data/
+models/
+*.csv
+*.xlsx
+*.pkl
+*.h5
+*.pt
+
+# Python
+__pycache__/
+*.py[cod]
+.env
+venv/
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
