@@ -37,3 +37,54 @@ def add_lags(df, col_name, lags=3):
 def calculate_log_returns(series):
     """Calcule les rendements logarithmiques pour la stationnarité."""
     return np.log(series / series.shift(1))
+
+def calculate_atr(df, window=14):
+    """Calcule l'Average True Range (ATR)."""
+    high = df['High']
+    low = df['Low']
+    close = df['Close'].shift(1)
+    
+    tr1 = high - low
+    tr2 = abs(high - close)
+    tr3 = abs(low - close)
+    
+    tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
+    atr = tr.rolling(window=window).mean()
+    return atr
+
+def calculate_adx(df, window=14):
+    """Calcule l'Average Directional Index (ADX)."""
+    high = df['High']
+    low = df['Low']
+    close = df['Close']
+    
+    plus_dm = high.diff()
+    minus_dm = low.diff()
+    
+    plus_dm[plus_dm < 0] = 0
+    minus_dm[minus_dm > 0] = 0
+    minus_dm = abs(minus_dm)
+    
+    # Simple implementation of TR
+    tr1 = high - low
+    tr2 = abs(high - close.shift(1))
+    tr3 = abs(low - close.shift(1))
+    tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
+    
+    atr = tr.rolling(window=window).mean()
+    
+    plus_di = 100 * (plus_dm.rolling(window=window).mean() / atr)
+    minus_di = 100 * (minus_dm.rolling(window=window).mean() / atr)
+    
+    dx = 100 * abs(plus_di - minus_di) / (plus_di + minus_di)
+    adx = dx.rolling(window=window).mean()
+    
+    return adx
+
+def calculate_cci(df, window=20):
+    """Calcule le Commodity Channel Index (CCI)."""
+    tp = (df['High'] + df['Low'] + df['Close']) / 3
+    sma_tp = tp.rolling(window=window).mean()
+    mean_dev = tp.rolling(window=window).apply(lambda x: np.abs(x - x.mean()).mean())
+    cci = (tp - sma_tp) / (0.015 * mean_dev)
+    return cci

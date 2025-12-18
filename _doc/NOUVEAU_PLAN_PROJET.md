@@ -65,7 +65,7 @@ Compte tenu des contraintes de temps, le projet se concentre sur l'essentiel : l
 
 | Semaine | Phase | Tâches Prioritaires |
 | :--- | :--- | :--- |
-| **S1** | **Data & ML (Le Socle)** | 1. Collecte & Nettoyage (yfinance).<br>2. Feature Engineering (RSI, MACD, Lags).<br>3. **Baseline Naïve** vs **XGBoost** (Validation immédiate de l'approche). |
+| **S1** | **Data & ML (Le Socle)** | 1. Collecte & Nettoyage (yfinance) - [x].<br>2. Feature Engineering Avancé (+ATR, ADX, CCI) - [x].<br>3. **XGBoost Optimisé (GA)** : Accuracy 63.36% - [x]. |
 | **S2** | **Deep Learning & Hybride** | 1. Implémentation **LSTM**.<br>2. Création du **Modèle Hybride (Stacking)**.<br>3. Comparaison : Est-ce que le Hybride bat le LSTM seul ? |
 | **S3** | **Démo & Présentation** | 1. **Mini-App Streamlit**.<br>2. **Création de la Présentation (Canva)** : Slides sur l'architecture Hybride et les résultats.<br>3. Rapport final. |
 

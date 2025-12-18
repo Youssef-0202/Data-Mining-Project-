@@ -47,3 +47,29 @@ Nous allons transformer ces prix bruts en indicateurs mathématiques :
 2.  **RSI (Relative Strength Index) :** Pour savoir si l'action est surachetée ou survendue.
 3.  **MACD :** Pour identifier la direction du momentum.
 4.  **Lags :** Utiliser les rendements des jours J-1, J-2, J-3 pour prédire J.
+
+## 5. Ingénierie des Caractéristiques (Feature Engineering)
+
+Cette phase transforme les prix bruts en indicateurs exploitables par les modèles d'apprentissage automatique.
+
+### A. Indicateurs Techniques
+*   **Log Returns (Rendements Logarithmiques) :** Utilisés à la place des prix bruts pour assurer la stationnarité de la série temporelle.
+*   **RSI (Relative Strength Index) :** Mesure la vitesse et le changement des mouvements de prix (surachat > 70, survente < 30).
+*   **MACD (Moving Average Convergence Divergence) :** Indicateur de tendance qui montre la relation entre deux moyennes mobiles des prix.
+*   **Bandes de Bollinger :** Mesurent la volatilité du marché (l'écart entre les bandes supérieures et inférieures).
+*   **ATR (Average True Range) :** Mesure la volatilité du marché en tenant compte des gaps.
+*   **ADX (Average Directional Index) :** Mesure la force d'une tendance (indépendamment de sa direction).
+*   **CCI (Commodity Channel Index) :** Identifie les nouveaux cycles de prix et les zones de surachat/survente.
+
+### B. Caractéristiques Temporelles (Lags)
+*   **Lag_1 à Lag_5 :** Nous avons inclus les rendements des 5 jours précédents. Cela permet au modèle de capturer la mémoire à court terme du marché (autocorrélation).
+
+### C. Indicateurs Macro-économiques
+*   **VIX (Indice de Volatilité) :** Surnommé "l'indice de la peur", il mesure la volatilité attendue du S&P 500.
+*   **TNX (Treasury Yield 10 Years) :** Représente le taux d'intérêt des obligations d'État américaines à 10 ans, influençant le coût du capital pour les entreprises technologiques.
+*   **SP500_Return :** Rendement logarithmique de l'indice S&P 500, utilisé comme indicateur de la tendance globale du marché.
+
+### D. Variable Cible (Target)
+*   **Direction :** Variable binaire (0 ou 1). 
+    *   `1` : Le rendement logarithmique est positif (Hausse).
+    *   `0` : Le rendement logarithmique est négatif ou nul (Baisse).
