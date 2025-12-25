@@ -7,7 +7,7 @@ from utils.processor import calculate_indicators
 
 # Page Configuration
 st.set_page_config(
-    page_title="Antigravity Finance | AI Stock Predictor",
+    page_title="Finance | AI Stock Predictor",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -20,34 +20,73 @@ st.markdown("""
     }
     .stMetric {
         background-color: #1e2130;
-        padding: 15px;
-        border-radius: 10px;
+        padding: 20px;
+        border-radius: 12px;
         border: 1px solid #3e4259;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+    /* Tab Styling Redesign */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 24px;
+        gap: 10px;
+        background-color: transparent;
     }
     .stTabs [data-baseweb="tab"] {
-        height: 50px;
-        white-space: pre-wrap;
+        height: 60px;
         background-color: #1e2130;
-        border-radius: 4px 4px 0px 0px;
-        gap: 1px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        border-radius: 8px 8px 0 0;
+        padding: 10px 30px;
+        color: #888;
+        font-weight: 600;
+        border: 1px solid #3e4259;
+        border-bottom: none;
+        transition: all 0.3s ease;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #2980b9;
-        color: white;
+        background-color: #2980b9 !important;
+        color: white !important;
+        border-color: #2980b9 !important;
+        box-shadow: 0 -4px 10px rgba(41, 128, 185, 0.2);
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        background-color: #2c3148;
+        color: #fff;
+    }
+    /* Section Header Styling */
+    .section-header {
+        padding: 20px;
+        border-left: 5px solid #2980b9;
+        background-color: rgba(41, 128, 185, 0.05);
+        margin-bottom: 25px;
+        border-radius: 0 12px 12px 0;
+    }
+    .section-header h3 {
+        color: #2980b9;
+        margin-bottom: 10px;
+        font-size: 1.5rem;
+    }
+    .interest-box {
+        color: #e0e0e0;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    .benefit-tag {
+        display: inline-block;
+        background-color: #2c3148;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin-right: 8px;
+        margin-top: 8px;
+        border: 1px solid #3e4259;
     }
     </style>
     """, unsafe_allow_html=True)
 
 # Sidebar
-st.sidebar.title("Antigravity Finance")
+st.sidebar.title("Finance | AI Stock Predictor")
 st.sidebar.markdown("---")
-ticker = st.sidebar.selectbox("Select Asset", ["AAPL", "MSFT", "TSLA", "NVDA", "GOOGL"])
-time_period = st.sidebar.selectbox("Time Period", ["1y", "2y", "5y", "max"], index=2)
+ticker = st.sidebar.selectbox("Select Asset", ["AAPL", "MSFT", "TSLA", "NVDA"])
+time_period = st.sidebar.selectbox("Time Period", ["1mo", "3mo", "6mo", "1y", "2y", "5y", "max"], index=5)
 
 st.sidebar.markdown("---")
 st.sidebar.info("This app uses a hybrid XGBoost + LSTM model to predict market direction.")
@@ -82,7 +121,19 @@ if data is not None:
     tab1, tab2, tab3 = st.tabs(["Technical Analysis", "AI Predictions", "Backtesting"])
 
     with tab1:
-        st.subheader("Interactive Price Chart")
+        st.markdown("""
+            <div class="section-header">
+                <h3>Technical Analysis (Descriptive)</h3>
+                <div class="interest-box">
+                    <b>Interest:</b> Understanding market structure and historical behavior. 
+                    This module translates raw price data into visual patterns that reveal the "psychology" of the market.
+                    <br>
+                    <div class="benefit-tag">Trend Identification</div>
+                    <div class="benefit-tag">Volatility Mapping</div>
+                    <div class="benefit-tag">Support/Resistance</div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
         
         # Add a Key/Legend for symbols
         with st.expander("Legend & Indicator Meanings"):
@@ -127,7 +178,19 @@ if data is not None:
         st.plotly_chart(fig, use_container_width=True)
 
     with tab2:
-        st.subheader("AI Prediction Dashboard")
+        st.markdown("""
+            <div class="section-header">
+                <h3>AI Prediction Dashboard (Predictive)</h3>
+                <div class="interest-box">
+                    <b>Interest:</b> Gaining a statistical edge through machine learning. 
+                    While human analysis is limited to a few indicators, our XGBoost model processes dozens of features simultaneously to detect non-linear signals.
+                    <br>
+                    <div class="benefit-tag">Signal Generation</div>
+                    <div class="benefit-tag">Probability Assessment</div>
+                    <div class="benefit-tag">Macro-Sentiment Integration</div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
         
         # Load Model
         import joblib
@@ -182,7 +245,19 @@ if data is not None:
             st.error("AI Model not found. Please ensure the model is trained and saved.")
 
     with tab3:
-        st.subheader("Strategy Backtesting")
+        st.markdown("""
+            <div class="section-header">
+                <h3>Strategy Backtesting (Prescriptive)</h3>
+                <div class="interest-box">
+                    <b>Interest:</b> Risk management and strategy validation. 
+                    A prediction is only useful if it translates into profit. This module simulates real-world trading to ensure the model outperforms a passive investment.
+                    <br>
+                    <div class="benefit-tag">Performance Audit</div>
+                    <div class="benefit-tag">Risk/Reward Analysis</div>
+                    <div class="benefit-tag">Strategy Optimization</div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
         
         if os.path.exists(model_path):
             from utils.processor import run_backtest
