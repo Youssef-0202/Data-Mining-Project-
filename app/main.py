@@ -86,7 +86,7 @@ st.markdown("""
 st.sidebar.title("Finance | AI Stock Predictor")
 st.sidebar.markdown("---")
 ticker = st.sidebar.selectbox("Select Asset", ["AAPL", "MSFT", "TSLA", "NVDA"])
-time_period = st.sidebar.selectbox("Time Period", ["1mo", "3mo", "6mo", "1y", "2y", "5y", "max"], index=5)
+time_period = st.sidebar.selectbox("Time Period", ["1mo", "3mo", "6mo", "1y", "2y", "5y", "max"], index=4)
 
 st.sidebar.markdown("---")
 st.sidebar.info("This app uses a hybrid XGBoost + LSTM model to predict market direction.")
@@ -175,7 +175,7 @@ if data is not None:
         fig.update_layout(height=800, template="plotly_dark", showlegend=False,
                           xaxis_rangeslider_visible=False)
         
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig)
 
     with tab2:
         st.markdown("""
@@ -207,7 +207,7 @@ if data is not None:
             full_df = prepare_features_for_prediction(df, macro_data)
             
             if not full_df.empty:
-                latest_features = full_df.tail(1).drop(columns=['Open', 'High', 'Low', 'Close', 'Volume', 'Log_Return', 'BB_Upper', 'BB_Lower'])
+                latest_features = full_df.tail(1).drop(columns=['Open', 'High', 'Low', 'Close', 'Volume', 'Log_Return', 'BB_Upper', 'BB_Lower'], errors='ignore')
                 # Ensure feature order matches training
                 feature_names = ['RSI', 'MACD', 'MACD_Signal', 'Log_Return_lag_1', 
                                 'Log_Return_lag_2', 'Log_Return_lag_3', 'Log_Return_lag_4', 
@@ -236,7 +236,7 @@ if data is not None:
                     with col2:
                         st.write("### Model Interpretation")
                         st.write("The model analyzes technical indicators and macro volatility to determine the most likely direction for the next period.")
-                        st.progress(confidence)
+                        st.progress(float(confidence))
                 else:
                     st.error(f"Missing features for prediction: {missing_features}")
             else:
@@ -287,7 +287,7 @@ if data is not None:
                 fig_backtest.add_trace(go.Scatter(x=backtest_results.index, y=backtest_results['Cumulative_Strategy'], name="AI Strategy", line=dict(color='cyan', width=3)))
                 
                 fig_backtest.update_layout(title="Cumulative Returns Comparison", template="plotly_dark", height=500)
-                st.plotly_chart(fig_backtest, use_container_width=True)
+                st.plotly_chart(fig_backtest)
             else:
                 st.warning("Not enough data for backtesting.")
         else:

@@ -42,9 +42,8 @@ def calculate_indicators(df):
         tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
         df['ATR'] = tr.rolling(window=14).mean()
     
-    # Log Returns and Lags
-    if 'Log_Return' not in df.columns:
-        df['Log_Return'] = np.log(df['Close'] / df['Close'].shift(1))
+    # Log Returns and Lags (Force recalculation for accuracy)
+    df['Log_Return'] = np.log(df['Close'] / df['Close'].shift(1))
     
     for lag in range(1, 6):
         col = f'Log_Return_lag_{lag}'
@@ -57,6 +56,11 @@ def prepare_features_for_prediction(df, macro_df):
     """
     Merge stock data with macro data and clean up for prediction.
     """
+    # Avoid overlapping columns (e.g., if df already has VIX/TNX from local fallback)
+    cols_to_drop = [col for col in macro_df.columns if col in df.columns]
+    if cols_to_drop:
+        df = df.drop(columns=cols_to_drop)
+        
     # Merge on index (Date)
     combined_df = df.join(macro_df, how='inner')
     
@@ -77,11 +81,15 @@ def run_backtest(df, model, feature_names):
     
     # Calculate Strategy Returns
     # If Signal is 1 (Buy), we get the next day's return
-    # If Signal is 0 (Sell), we stay out (0 return)
-    df['Strategy_Return'] = df['Signal'] * df['Log_Return'].shift(-1)
+    # We add a 0.1% transaction cost whenever the signal changes (trade executed)
+    df['Trade'] = df['Signal'].diff().fillna(0).abs()
+    transaction_cost = 0.001 # 0.1%
     
-    # Cumulative Returns
-    df['Cumulative_Market'] = (1 + df['Log_Return']).cumprod()
-    df['Cumulative_Strategy'] = (1 + df['Strategy_Return']).cumprod()
+    df['Strategy_Return'] = (df['Signal'] * df['Log_Return'].shift(-1)) - (df['Trade'] * transaction_cost)
+    
+    # Cumulative Returns (Corrected for Log Returns)
+    # Formula: exp(cumsum(log_returns))
+    df['Cumulative_Market'] = np.exp(df['Log_Return'].cumsum())
+    df['Cumulative_Strategy'] = np.exp(df['Strategy_Return'].cumsum())
     
     return df
