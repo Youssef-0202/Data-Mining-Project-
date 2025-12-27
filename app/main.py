@@ -85,7 +85,7 @@ st.markdown("""
 # Sidebar
 st.sidebar.title("Finance | AI Stock Predictor")
 st.sidebar.markdown("---")
-ticker = st.sidebar.selectbox("Select Asset", ["AAPL", "MSFT", "TSLA", "NVDA"])
+ticker = st.sidebar.selectbox("Select Asset", ["AAPL", "MSFT", "TSLA"])
 time_period = st.sidebar.selectbox("Time Period", ["1mo", "3mo", "6mo", "1y", "2y", "5y", "max"], index=4)
 
 st.sidebar.markdown("---")
@@ -99,7 +99,7 @@ with st.spinner("Fetching market data..."):
     data = fetch_stock_data(ticker, period=time_period)
     macro_data = fetch_macro_data(period=time_period)
 
-if data is not None:
+if data is not None and not data.empty:
     # Process Indicators
     df = calculate_indicators(data)
     
@@ -294,6 +294,7 @@ if data is not None:
             st.error("Model not found.")
 
 else:
-    st.error("Failed to load market data.")
-    st.info("This is often due to a network timeout or DNS issue with the Yahoo Finance API. Please check your internet connection and try again.")
-    st.button("Retry")
+    st.error(f"Failed to load market data for {ticker}.")
+    st.info(f"The asset '{ticker}' might not be available in the local fallback data or there is a connectivity issue with Yahoo Finance.")
+    if st.button("Retry"):
+        st.rerun()
