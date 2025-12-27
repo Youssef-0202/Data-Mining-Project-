@@ -56,6 +56,12 @@ def prepare_features_for_prediction(df, macro_df):
     """
     Merge stock data with macro data and clean up for prediction.
     """
+    # Ensure both dataframes are timezone-naive to avoid join errors
+    if df.index.tz is not None:
+        df.index = df.index.tz_localize(None)
+    if macro_df.index.tz is not None:
+        macro_df.index = macro_df.index.tz_localize(None)
+
     # Avoid overlapping columns (e.g., if df already has VIX/TNX from local fallback)
     cols_to_drop = [col for col in macro_df.columns if col in df.columns]
     if cols_to_drop:

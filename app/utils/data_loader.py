@@ -41,6 +41,9 @@ def fetch_stock_data(ticker, period="5y", interval="1d"):
         if not data.empty:
             if isinstance(data.columns, pd.MultiIndex):
                 data.columns = data.columns.get_level_values(0)
+            # Normalize timezone to naive
+            if data.index.tz is not None:
+                data.index = data.index.tz_localize(None)
             return data
     except Exception as e:
         print(f"Online fetch failed for {ticker}: {e}")
@@ -85,6 +88,10 @@ def fetch_macro_data(period="5y"):
         if not vix_data.empty and not tnx_data.empty:
             vix = vix_data['Close']
             tnx = tnx_data['Close']
+            # Normalize timezones before concat
+            if vix.index.tz is not None: vix.index = vix.index.tz_localize(None)
+            if tnx.index.tz is not None: tnx.index = tnx.index.tz_localize(None)
+            
             macro_df = pd.concat([vix, tnx], axis=1)
             macro_df.columns = ["VIX", "TNX"]
             return macro_df.ffill().bfill()
